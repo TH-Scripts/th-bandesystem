@@ -2,6 +2,34 @@ ESX = exports['es_extended']:getSharedObject()
 
 
 
+--MARK: Get all members
+--@param gangId int
+--@return table | false
+
+lib.callback.register('th-bandesystem:getAllMembers', function(source, gangId)
+    local xPlayer      = ESX.GetPlayerFromId(source)
+    local memberData   = {}
+
+    if not xPlayer then return end
+
+    local members = MySQL.Sync.fetchAll('SELECT * FROM gang_members WHERE gang_id = ?', { gangId.gang_id })
+
+
+    for _, member in pairs(members) do
+
+        local oPlayer = ESX.GetPlayerFromIdentifier(member.identifier)
+
+
+        table.insert(memberData, {
+            name = oPlayer.getName(),
+            identifier = member.identifier,
+            gang_id = member.gang_id
+        })
+    end
+
+
+    return memberData
+end)
 
 --MARK: Search for members
 --@param source int
@@ -57,7 +85,7 @@ lib.callback.register('th-bandesystem:getGangId', function(source)
     if not xPlayer then return end
 
     local gangId = MySQL.Sync.fetchAll('SELECT gang_id FROM gang_members WHERE identifier = ?', { xPlayer.identifier })
-
+    
     return gangId[1]
 end)
 

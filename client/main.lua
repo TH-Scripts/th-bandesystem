@@ -66,7 +66,7 @@ function OpenMembersMenu(jobName, gangId)
                 icon = 'fa-solid fa-users',
                 iconColor = '#06915a',
                 onSelect = function()
-                    print('Se alle medlemmer')
+                    AllMembersContextMenu(gangId)
                 end
             },
             {
@@ -82,6 +82,43 @@ function OpenMembersMenu(jobName, gangId)
     })
 
     return lib.showContext('th_bandesystem_members_menu')
+
+end
+
+
+
+--MARK: See all members
+--@param gangId int
+--@return context menu
+
+function AllMembersContextMenu(gangId)
+    
+    local options = {}
+
+    local result = lib.callback.await('th-bandesystem:getAllMembers', false, gangId)
+
+    if result then
+        for _, member in pairs(result) do
+            table.insert(options, {
+                title = member.name,
+                description = 'Tryk for at se medlemsfunktionerne',
+                icon = 'fa-solid fa-user',
+                iconColor = '#06915a',
+                onSelect = function()
+                    MemberContextMenuSingle(member.name, member.identifier, member.gang_id)
+                end
+            })
+        end
+    end
+
+    lib.registerContext({
+        id = 'th_bandesystem_see_all_members',
+        title = 'Se alle medlemmer',
+        menu = 'th_bandesystem_members_menu',
+        options = options
+    })
+
+    return lib.showContext('th_bandesystem_see_all_members')
 
 end
 
@@ -201,9 +238,5 @@ end
 --@return int
 
 function GetGangId()
-    lib.callback('th-bandesystem:getGangId', false, function(result)
-        if result then
-            return result.gang_id
-        end
-    end)
+    return lib.callback.await('th-bandesystem:getGangId', false)
 end
