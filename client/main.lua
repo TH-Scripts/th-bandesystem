@@ -70,14 +70,23 @@ function OpenMembersMenu(jobName, gangId)
                 end
             },
             {
-                title = 'Send besked',
-                description = 'Send besked til alle medlemmer i din banden',
-                icon = 'fa-solid fa-envelope',
+                title = 'Tilføj medlem',
+                description = 'Tilføj medlem til din bande',
+                icon = 'fa-solid fa-user-plus',
                 iconColor = '#06915a',
                 onSelect = function()
-                    print('Send besked')
+                    AddMembersContextMenu(gangId)
                 end
-            },
+            }
+            -- {
+            --     title = 'Send besked',
+            --     description = 'Send besked til alle medlemmer i din banden',
+            --     icon = 'fa-solid fa-envelope',
+            --     iconColor = '#06915a',
+            --     onSelect = function()
+            --         print('Send besked')
+            --     end
+            -- },
         }
     })
 
@@ -234,9 +243,92 @@ function RemoveMember(name, identifier, gangId)
 end
 
 
+--MARK: Add Members Context Menu
+--@param gangId int
+--@return context menu
+
+function AddMembersContextMenu(gangId)
+
+    local options = {}
+    local players_in_area_ids = {}
+
+    local players_in_area = ESX.Game.GetPlayersInArea(GetEntityCoords(cache.ped), 5.0, true)
+    
+    for _, player in pairs(players_in_area) do
+        table.insert(players_in_area_ids, GetPlayerServerId(player))
+    end
+
+    local players_in_distance = lib.callback.await('th-bandesystem:getPlayersInDistance', false, players_in_area_ids)
+
+
+
+    if not players_in_distance then 
+        lib.notify({
+            title = 'Ingen personer i nærheden',
+            description = 'Ingen personer i nærheden',
+            type = 'error'
+        })
+        return
+    end
+
+
+    for _, player in pairs(players_in_distance) do
+        table.insert(options, {
+            title = player.name,
+            description = 'Tryk for at tilføje medlem til din bande',
+            icon = 'fa-solid fa-user-plus',
+            iconColor = '#06915a',
+            onSelect = function()
+                AddMemberToGang(player.identifier, gangId)
+            end
+        })
+    end
+
+
+    lib.registerContext({
+        id = 'th_bandesystem_add_members_context_menu',
+        title = 'Tilføj medlem',
+        menu = 'th_bandesystem_members_menu',
+        options = options
+    })
+
+    return lib.showContext('th_bandesystem_add_members_context_menu')
+
+end
+
 --MARK: Get gang id
 --@return int
 
 function GetGangId()
     return lib.callback.await('th-bandesystem:getGangId', false)
+end
+
+
+
+
+--MARK: Add member to gang
+--@param identifier string
+--@param gangId int
+--@return void
+
+function AddMemberToGang(identifier, gangId)
+
+    if not identifier then return end
+
+    lib.callback('th-bandesystem:addMemberToGang', false, function(result)
+        if result then
+            lib.notify({
+                title = 'Medlem tilføjet',
+                description = 'Medlemmet er blevet tilføjet til din bande',
+                type = 'success'
+            })
+        else
+            lib.notify({
+                title = 'Problem',
+                description = 'Medlemmet er allerede i en bande',
+                type = 'error'
+            })
+        end
+    end, identifier, gangId)
+
 end
