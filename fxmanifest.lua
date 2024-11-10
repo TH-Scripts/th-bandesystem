@@ -17,6 +17,7 @@ server_scripts {
 shared_scripts {
     'config.lua',
     '@ox_lib/init.lua',
+    '@es_extended/imports.lua'
 }
 
 dependencies {
