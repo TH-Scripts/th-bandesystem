@@ -1,10 +1,7 @@
-RegisterNetEvent('esx:playerLoaded')
-AddEventHandler('esx:playerLoaded',function(xPlayer, isNew, skin)
-    ESX.PlayerData = xPlayer
-end)
-
 RegisterCommand('creategang', function()
-    if not ESX.PlayerData.group == 'admin' then
+    local group = GetPlayerGroup()
+
+    if group ~= 'admin' then
         return lib.notify({title = 'Du har ikke adgang til dette', type = 'warning'})
     else
         CreateGang()
@@ -12,9 +9,11 @@ RegisterCommand('creategang', function()
 end)
 
 RegisterCommand('handlegangs', function()
-    if not ESX.PlayerData.group == 'admin' then
+    local group = GetPlayerGroup()
+
+    if group ~= 'admin' then
         return lib.notify({title = 'Du har ikke adgang til dette', type = 'warning'})
     else
-        getgangs()
+        GetGangs()
     end
 end)
