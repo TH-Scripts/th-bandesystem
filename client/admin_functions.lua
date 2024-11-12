@@ -31,5 +31,5 @@ function CreateGang()
         {type = 'input', label = 'Bande navn', required = true}
     })
 
-    print(input[1], input[2])
+    lib.callback('th-bandesystem:CreateGang', false, function() end, input[1], input[2])
 end
