@@ -16,26 +16,42 @@ function OpenBossMenu()
 
     local gangId = GetGangId()
 
-    local jobName = lib.callback('th-bandesystem:GetGangName', false)
+    local jobName = lib.callback.await('th-bandesystem:GetGangName', false)
 
     if not jobName then
         return lib.notify({ title = 'Du er ikke medlem af en bande', type = 'error'})
     end
 
+    local options = {
+        {
+            title = 'Medlemsmenu',
+            description = 'Medlemsmenuen for banden '..jobName,
+            icon = 'fa-solid fa-users',
+            iconColor = '#06915a',
+            onSelect = function()
+                OpenMembersMenu(jobName, gangId)
+            end
+        },
+    }
+
+    if Config.enableSkills then
+        table.insert(options, {
+            
+            title = 'Skillsmenu',
+            description = 'Tjek status på bandens skills',
+            icon = 'fa-solid fa-flask',
+            iconColor = '#06915a',
+            onSelect = function()
+                ShowSkills(jobName)
+            end
+            
+        })
+    end
+
     lib.registerContext({
         id = 'th_bandesystem_boss_menu',
         title = 'Boss Menu - '..jobName,
-        options = {
-            {
-                title = 'Medlemsmenu',
-                description = 'Medlemsmenuen for banden '..jobName,
-                icon = 'fa-solid fa-users',
-                iconColor = '#06915a',
-                onSelect = function()
-                    OpenMembersMenu(jobName, gangId)
-                end
-            }
-        }
+        options = options
     })
 
 

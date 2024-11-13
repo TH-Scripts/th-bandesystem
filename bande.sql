@@ -13,4 +13,10 @@ CREATE TABLE IF NOT EXISTS `gang_members` (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
+CREATE TABLE IF NOT EXISTS `gang_skills` (
+  `gang_name` varchar(30) DEFAULT NULL,
+  `gang_level` int(11) DEFAULT 1,
+  `gang_exp` int(11) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
 ALTER TABLE `users` ADD `gang` VARCHAR(25) DEFAULT NULL;
