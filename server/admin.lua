@@ -33,7 +33,6 @@ end)
 lib.callback.register('th-bandesystem:CreateGang', function(source, owner, name)
     local xPlayer = ESX.GetPlayerFromId(source)
     local yPlayer = ESX.GetPlayerFromId(owner)
-
     if not xPlayer or not yPlayer then return end
 
 
@@ -54,16 +53,29 @@ end)
 lib.callback.register('th-bandesystem:EditName', function(source, oldname, newname)
     if not source then return end
 
+    -- local owner = MySQL.query.await('SELECT gang_owner FROM `gangs` WHERE gang_name = ?', {
+    --     gangname
+    -- })
 
-    local success = MySQL.update.await('UPDATE gangs SET gang_name = ? WHERE gang_name = ?', {
-        newname, oldname
-    })
+    -- print(json.encode(owner))
 
-    if not success then return end
+    -- local oID = ESX.GetPlayerFromIdentifier(owner)
 
-    SendDiscord('Bande navn ændret', 'En bande fik ændre sit navn\n\nGamle navn: ' .. oldname .. '\nNye navn ' .. newname .. '')
+    -- if not oID then 
+    --     return TriggerClientEvent('ox_lib:notify', source, {title = 'Ikke online', description = 'Ejeren af banden er ikke online', type = 'error'})
+    -- end
 
-    return true
+    -- local alert = TriggerClientEvent('ox_lib:alertDialog', oID.source, {header = 'Vil du godkende dette navn?', content = 'Navnet vil blive ændret fra ' .. oldname .. ', til ' .. newname .. '', cancel = true, labels = {confirm = 'Ja', cancel = 'Nej'}})
+
+        local success = MySQL.update.await('UPDATE gangs SET gang_name = ? WHERE gang_name = ?', {
+            newname, oldname
+        })
+    
+        if not success then return end
+    
+        SendDiscord('Bande navn ændret', 'En bande fik ændre sit navn\n\nGamle navn: ' .. oldname .. '\nNye navn ' .. newname .. '')
+    
+        return true
 end)
 
 --MARK: Delete Gang
@@ -71,6 +83,7 @@ end)
 lib.callback.register('th-bandesystem:DeleteGang', function(source, gangname) 
     if not source then return end
     if not gangname then return end
+
 
     local deleted = MySQL.query.await('DELETE FROM gangs WHERE gang_name = ?', {
         gangname
@@ -82,3 +95,13 @@ lib.callback.register('th-bandesystem:DeleteGang', function(source, gangname)
 
     return true
 end)
+
+-- lib.callback.register('th-bandesystem:GetOwner', function(source, gangname)
+--     local owner = MySQL.query.await('SELECT gang_owner FROM gangs WHERE gang_name = ?', {
+--         gangname
+--     })
+
+--     if not owner then return end
+
+--     return owner[1]
+-- end)

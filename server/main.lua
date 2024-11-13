@@ -12,6 +12,8 @@ lib.callback.register('th-bandesystem:getAllMembers', function(source, gangId)
 
     if not xPlayer then return end
 
+    if not gangId then return end
+
     local members = MySQL.Sync.fetchAll('SELECT * FROM gang_members WHERE gang_id = ?', { gangId.gang_id })
 
 

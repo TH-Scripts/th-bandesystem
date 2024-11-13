@@ -15,7 +15,7 @@ function GetPlayerGroup()
     return group
 end
 
---MARK: Get Gangs
+--MARK: Get Gangs 
 --@return context menu
 
 function GetGangs()
@@ -54,7 +54,7 @@ function EditGang(gangname)
     if not gangname then return end
 
     lib.registerContext({
-        id = 'the_bandesystem_gangs_edit',
+        id = 'th_bandesystem_gangs_edit',
         title = 'Håndter ' .. gangname .. '',
         options = {
             {
@@ -74,9 +74,10 @@ function EditGang(gangname)
         }
     })
 
-    lib.showContext('the_bandesystem_gangs_edit')
+    lib.showContext('th_bandesystem_gangs_edit')
 end
 
+--MARK: Edit Gang Name
 --@param: oldname
 function EditGangName(oldname)
 
@@ -85,8 +86,6 @@ function EditGangName(oldname)
     local input = lib.inputDialog('Ændre ' .. oldname .."'s navn", {
         {type = 'input', label = 'Angiv det nye navn', required = true}
     })
-
-    --print(newname)
 
     local newname = input[1]
 
@@ -97,7 +96,7 @@ function EditGangName(oldname)
     end
 
     local alert = lib.alertDialog({
-        header = 'Er du sikker',
+        header = 'Er du sikker?',
         content = 'Er du sikker på at du vil ændre ' .. oldname .. "'s navn til " .. newname .. '?',
         centered = true,
         cancel = true,
@@ -109,7 +108,6 @@ function EditGangName(oldname)
 
     if alert == 'confirm' then
         local name_changed = lib.callback.await('th-bandesystem:EditName', false, oldname, newname)
-        print(name_changed)
 
         if name_changed then
             lib.notify({title = 'Navn ændret', description = 'Du ændrede ' .. oldname .. "'s navn til " .. newname .. '!', type = 'success'})
@@ -127,7 +125,7 @@ function DeleteGang(gangname)
     if not gangname then return end
 
     local alert = lib.alertDialog({
-        header = 'Er du sikker',
+        header = 'Er du sikker?',
         content = 'Er du sikker på at du vil slette ' .. gangname .. '?\n\n# Dette kan ikke fortrydes',
         cancel = true,
         labels = {
@@ -162,7 +160,7 @@ function CreateGang()
 
     if not input then return end
 
-    local gang_owner_id = newname
+    local gang_owner_id = input[1]
     local gang_name = input[2]
 
     local create_gang = lib.callback.await('th-bandesystem:CreateGang', false, gang_owner_id, gang_name)
