@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS `gangs` (
   `gang_name` varchar(30) DEFAULT NULL,
   `gang_owner` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`gang_id`)
+  ADD UNIQUE(`gang_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 CREATE TABLE IF NOT EXISTS `gang_members` (

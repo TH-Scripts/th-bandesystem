@@ -43,6 +43,42 @@ lib.callback.register('th-bandesystem:CreateGang', function(source, owner, name)
 
     if not create_gang then return end
 
+    SendDiscord('Bande oprettet', 'Der blev oprettet en bande\n\nBande navn: ' .. name .. '\nBande Leder (id): ' .. yPlayer.identifier .. '')
+
     return true
 
+end)
+
+--MARK: Edit Name
+
+lib.callback.register('th-bandesystem:EditName', function(source, oldname, newname)
+    if not source then return end
+
+
+    local success = MySQL.update.await('UPDATE gangs SET gang_name = ? WHERE gang_name = ?', {
+        newname, oldname
+    })
+
+    if not success then return end
+
+    SendDiscord('Bande navn ændret', 'En bande fik ændre sit navn\n\nGamle navn: ' .. oldname .. '\nNye navn ' .. newname .. '')
+
+    return true
+end)
+
+--MARK: Delete Gang
+
+lib.callback.register('th-bandesystem:DeleteGang', function(source, gangname) 
+    if not source then return end
+    if not gangname then return end
+
+    local deleted = MySQL.query.await('DELETE FROM gangs WHERE gang_name = ?', {
+        gangname
+    })
+
+    if not deleted then return end
+
+    SendDiscord('Bande Slettet', 'En bande er blevet slettet\n\nBande navn: ' .. gangname .. '')
+
+    return true
 end)
