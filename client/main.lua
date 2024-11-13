@@ -16,7 +16,11 @@ function OpenBossMenu()
 
     local gangId = GetGangId()
 
-    local jobName = ESX.PlayerData.job.label
+    local jobName = lib.callback('th-bandesystem:GetGangName', false)
+
+    if not jobName then
+        return lib.notify({ title = 'Du er ikke medlem af en bande', type = 'error'})
+    end
 
     lib.registerContext({
         id = 'th_bandesystem_boss_menu',

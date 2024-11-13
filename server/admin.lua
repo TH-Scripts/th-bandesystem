@@ -42,6 +42,10 @@ lib.callback.register('th-bandesystem:CreateGang', function(source, owner, name)
 
     if not create_gang then return end
 
+    local gang = MySQL.insert.await('UPDATE users SET gang = ? WHERE identifier = ?', {
+        name, yPlayer.identifier
+    })
+
     SendDiscord('Bande oprettet', 'Der blev oprettet en bande\n\nBande navn: ' .. name .. '\nBande Leder (id): ' .. yPlayer.identifier .. '')
 
     return true

@@ -91,6 +91,20 @@ lib.callback.register('th-bandesystem:getGangId', function(source)
     return gangId[1]
 end)
 
+--MARK: Get Gang Name
+
+lib.callback.register('th-bandesystem:GetGangName', function(source)
+    local xPlayer = ESX.GetPlayerFromId(source)
+    local gang = MySQL.query.await('SELECT gang FROM users WHERE identifier = ?', {
+        xPlayer.identifier
+    })
+
+    if not gang then return end
+
+    return gang[1].gang
+end)
+
+
 --MARK: Remove member
 --@param source int
 --@param identifier string
