@@ -62,7 +62,7 @@ lib.callback.register('th-bandesystem:EditName', function(source, oldname, newna
 
     if not success then return end
 
-    SendDiscord('Bande navn ændret', 'En bande fik ændre sit navn\n\nGamle navn: ' .. oldname .. '\nNye navn ' .. newname .. '', )
+    SendDiscord('Bande navn ændret', 'En bande fik ændre sit navn\n\nGamle navn: ' .. oldname .. '\nNye navn ' .. newname .. '')
 
     return true
 end)
