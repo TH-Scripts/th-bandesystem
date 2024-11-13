@@ -27,7 +27,7 @@ function OpenBossMenu()
             title = 'Medlemsmenu',
             description = 'Medlemsmenuen for banden '..jobName,
             icon = 'fa-solid fa-users',
-            iconColor = '#06915a',
+            iconColor = Config.ColorScheme,
             onSelect = function()
                 OpenMembersMenu(jobName, gangId)
             end
@@ -40,7 +40,7 @@ function OpenBossMenu()
             title = 'Skillsmenu',
             description = 'Tjek status på bandens skills',
             icon = 'fa-solid fa-flask',
-            iconColor = '#06915a',
+            iconColor = Config.ColorScheme,
             onSelect = function()
                 ShowSkills(jobName)
             end
@@ -75,7 +75,7 @@ function OpenMembersMenu(jobName, gangId)
                 title = 'Søg efter medlemmer',
                 description = 'Søg efter medlemmer i din banden',
                 icon = 'fa-solid fa-magnifying-glass',
-                iconColor = '#06915a',
+                iconColor = Config.ColorScheme,
                 onSelect = function()
                     SearchForMembers(gangId)
                 end
@@ -84,7 +84,7 @@ function OpenMembersMenu(jobName, gangId)
                 title = 'Se alle medlemmer',
                 description = 'Se alle medlemmer i din banden',
                 icon = 'fa-solid fa-users',
-                iconColor = '#06915a',
+                iconColor = Config.ColorScheme,
                 onSelect = function()
                     AllMembersContextMenu(gangId)
                 end
@@ -93,7 +93,7 @@ function OpenMembersMenu(jobName, gangId)
                 title = 'Tilføj medlem',
                 description = 'Tilføj medlem til din bande',
                 icon = 'fa-solid fa-user-plus',
-                iconColor = '#06915a',
+                iconColor = Config.ColorScheme,
                 onSelect = function()
                     AddMembersContextMenu(gangId)
                 end
@@ -132,7 +132,7 @@ function AllMembersContextMenu(gangId)
                 title = member.name,
                 description = 'Tryk for at se medlemsfunktionerne',
                 icon = 'fa-solid fa-user',
-                iconColor = '#06915a',
+                iconColor = Config.ColorScheme,
                 onSelect = function()
                     MemberContextMenuSingle(member.name, member.identifier, member.gang_id)
                 end
@@ -189,7 +189,7 @@ function SearchMemberContextMenu(members)
             title = member.name,
             description = "Tryk for at se medlemsfunktionerne",
             icon = 'fa-solid fa-user',
-            iconColor = '#06915a',
+            iconColor = Config.ColorScheme,
             onSelect = function()
                 MemberContextMenuSingle(member.name, member.identifier, member.gangId)
             end
@@ -224,7 +224,7 @@ function MemberContextMenuSingle(name, identifier, gangId)
                 title = 'Fjern medlem',
                 description = 'Fjern medlemmet fra din bande',
                 icon = 'fa-solid fa-user-minus',
-                iconColor = '#06915a',
+                iconColor = Config.ColorScheme,
                 onSelect = function()
                     RemoveMember(name, identifier, gangId)
                 end
@@ -297,7 +297,7 @@ function AddMembersContextMenu(gangId)
             title = player.name,
             description = 'Tryk for at tilføje medlem til din bande',
             icon = 'fa-solid fa-user-plus',
-            iconColor = '#06915a',
+            iconColor = Config.ColorScheme,
             onSelect = function()
                 AddMemberToGang(player.identifier, gangId)
             end
