@@ -46,7 +46,7 @@ lib.callback.register('th-bandesystem:CreateGang', function(source, owner, name)
         name, yPlayer.identifier
     })
 
-    SendDiscord('Bande oprettet', 'Der blev oprettet en bande\n\nBande navn: ' .. name .. '\nBande Leder (id): ' .. yPlayer.identifier .. '')
+    SendDiscord('Bande oprettet', 'Der blev oprettet en bande\n\nBande navn: ' .. name .. '\nBande Leder (id): ' .. yPlayer.identifier .. '', 5763719)
 
     return true
 
@@ -62,7 +62,7 @@ lib.callback.register('th-bandesystem:EditName', function(source, oldname, newna
 
     if not success then return end
 
-    SendDiscord('Bande navn ændret', 'En bande fik ændre sit navn\n\nGamle navn: ' .. oldname .. '\nNye navn ' .. newname .. '')
+    SendDiscord('Bande navn ændret', 'En bande fik ændre sit navn\n\nGamle navn: ' .. oldname .. '\nNye navn ' .. newname .. '', 16776960)
 
     return true
 end)
@@ -80,7 +80,7 @@ lib.callback.register('th-bandesystem:DeleteGang', function(source, gangname)
 
     if not deleted then return end
 
-    SendDiscord('Bande Slettet', 'En bande er blevet slettet\n\nBande navn: ' .. gangname .. '')
+    SendDiscord('Bande Slettet', 'En bande er blevet slettet\n\nBande navn: ' .. gangname .. '', 15548997)
 
     return true
 end)
