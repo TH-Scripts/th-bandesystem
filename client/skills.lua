@@ -1,4 +1,7 @@
 --MARK: Skill System
+--@param gangname string
+--@return context menu
+
 function ShowSkills(gangname)
     if not gangname then return end
 
@@ -25,5 +28,5 @@ function ShowSkills(gangname)
         })
     end
 
-    lib.showContext('Skill_main')
+    return lib.showContext('Skill_main')
 end
