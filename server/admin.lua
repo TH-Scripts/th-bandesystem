@@ -56,30 +56,15 @@ end)
 
 lib.callback.register('th-bandesystem:EditName', function(source, oldname, newname)
     if not source then return end
+    local success = MySQL.update.await('UPDATE gangs SET gang_name = ? WHERE gang_name = ?', {
+        newname, oldname
+    })
 
-    -- local owner = MySQL.query.await('SELECT gang_owner FROM `gangs` WHERE gang_name = ?', {
-    --     gangname
-    -- })
+    if not success then return end
 
-    -- print(json.encode(owner))
+    SendDiscord('Bande navn ændret', 'En bande fik ændre sit navn\n\nGamle navn: ' .. oldname .. '\nNye navn ' .. newname .. '', )
 
-    -- local oID = ESX.GetPlayerFromIdentifier(owner)
-
-    -- if not oID then 
-    --     return TriggerClientEvent('ox_lib:notify', source, {title = 'Ikke online', description = 'Ejeren af banden er ikke online', type = 'error'})
-    -- end
-
-    -- local alert = TriggerClientEvent('ox_lib:alertDialog', oID.source, {header = 'Vil du godkende dette navn?', content = 'Navnet vil blive ændret fra ' .. oldname .. ', til ' .. newname .. '', cancel = true, labels = {confirm = 'Ja', cancel = 'Nej'}})
-
-        local success = MySQL.update.await('UPDATE gangs SET gang_name = ? WHERE gang_name = ?', {
-            newname, oldname
-        })
-    
-        if not success then return end
-    
-        SendDiscord('Bande navn ændret', 'En bande fik ændre sit navn\n\nGamle navn: ' .. oldname .. '\nNye navn ' .. newname .. '')
-    
-        return true
+    return true
 end)
 
 --MARK: Delete Gang

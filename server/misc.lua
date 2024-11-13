@@ -1,8 +1,8 @@
-function SendDiscord(title, message)
+function SendDiscord(title, message, color)
     local embed = {}
     embed = {
         {
-            ["color"] = 65280,
+            ["color"] = color,
             ["title"] = "**" .. title .. "**",
             ["description"] = "**" .. message .. "**",
             ["footer"] = {

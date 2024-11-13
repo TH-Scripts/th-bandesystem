@@ -14,9 +14,12 @@ CREATE TABLE IF NOT EXISTS `gang_members` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 CREATE TABLE IF NOT EXISTS `gang_skills` (
-  `gang_name` varchar(30) DEFAULT NULL,
-  `gang_level` int(11) DEFAULT 1,
-  `gang_exp` int(11) DEFAULT 0
+  `gang_id` int(11) DEFAULT NULL,
+  `house_level` int(11) DEFAULT 1,
+  `house_xp` int(11) DEFAULT 0,
+  `robbery_level` int(11) DEFAULT 1,
+  `robbery_xp` int(11) DEFAULT 0,
+  PRIMARY KEY("gang_id")
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 ALTER TABLE `users` ADD `gang` VARCHAR(25) DEFAULT NULL;
