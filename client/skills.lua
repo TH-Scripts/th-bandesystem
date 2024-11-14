@@ -125,19 +125,3 @@ function CheckForLevelUp(skill, exp)
         return false
     end
 end
-
-
-RegisterCommand('getlevel', function(source, args, rawCommand)
-    local test = exports['th-bandesystem']:CheckLevel('house_xp', 5)
-    print(test)
-end)
-
-RegisterCommand('levelupskill', function(source, args, rawCommand)
-    CheckForLevelUp('house_xp', 10)
-end)
-
-
-
-RegisterCommand('addskillxp', function(source, args, rawCommand)
-    exports['th-bandesystem']:AddExp("house_xp", 10)
-end)

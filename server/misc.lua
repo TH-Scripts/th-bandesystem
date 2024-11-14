@@ -6,7 +6,7 @@ function SendDiscord(title, message, color)
             ["title"] = "**" .. title .. "**",
             ["description"] = "**" .. message .. "**",
             ["footer"] = {
-                ["text"] = 'TH-scripts @ 2024'
+                ["text"] = 'TH - Development @ 2024'
             },
         }
     }

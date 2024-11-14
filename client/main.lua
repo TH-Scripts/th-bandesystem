@@ -98,15 +98,6 @@ function OpenMembersMenu(jobName, gangId)
                     AddMembersContextMenu(gangId)
                 end
             }
-            -- {
-            --     title = 'Send besked',
-            --     description = 'Send besked til alle medlemmer i din banden',
-            --     icon = 'fa-solid fa-envelope',
-            --     iconColor = '#06915a',
-            --     onSelect = function()
-            --         print('Send besked')
-            --     end
-            -- },
         }
     })
 

@@ -23,24 +23,30 @@ function GetGangs()
     local gangs = lib.callback.await('th-bandesystem:GetGangs', false)
     local options = {}
 
-
     if not gangs then
         return lib.notify({title = 'Der er ikke registeret nogle bander', type = 'error'})
     end
 
     for _,v in pairs(gangs) do
-        table.insert(options, {
-            title = v.gang_name,
-            description = 'Bande boss: ' .. v.gang_owner .. '',
-            onSelect = function()
-                EditGang(v.gang_name)
-            end
-        })
+
+        local memberCount = #v.members
+
+        for _, v in pairs(v.gangs) do
+            table.insert(options, {
+                title = v.gang_name,
+                icon = 'fa-solid fa-id-badge',
+                iconColor = Config.ColorScheme,
+                description = 'Bande leder: ' .. v.gang_owner .. ' \n' .. 'Antal medlemmer: ' .. memberCount,
+                onSelect = function()
+                    EditGang(v.gang_name)
+                end
+            })
+        end
     end
 
     lib.registerContext({
         id = 'th_bandesystem_gangs_context_menu',
-        title = 'Håndter bander',
+        title = 'Håndter - bander',
         options = options
     })
 
@@ -55,10 +61,12 @@ function EditGang(gangname)
 
     lib.registerContext({
         id = 'th_bandesystem_gangs_edit',
-        title = 'Håndter ' .. gangname .. '',
+        title = 'Håndter - ' .. gangname .. '',
         options = {
             {
                 title = 'Ændre navn',
+                icon = 'fa-solid fa-pen-to-square',
+                iconColor = Config.ColorScheme,
                 description = 'Tilpas bandens navn (Ejeren af bande skal være ingame)',
                 onSelect = function()
                     EditGangName(gangname)
@@ -66,6 +74,8 @@ function EditGang(gangname)
             },
             {
                 title = 'Slet bande',
+                icon = 'fa-solid fa-trash',
+                iconColor = Config.ColorScheme,
                 description = 'Fjerner en bande fra systemet',
                 onSelect = function()
                     DeleteGang(gangname)
@@ -73,6 +83,8 @@ function EditGang(gangname)
             },
             {
                 title = 'Ændre bande boss',
+                icon = 'fa-solid fa-user-shield',
+                iconColor = Config.ColorScheme,
                 description = 'Ændre hvem der skal være leder af banden',
                 onSelect = function()
                     ChangeBoss(gangname)
@@ -93,6 +105,8 @@ function EditGangName(oldname)
     local input = lib.inputDialog('Ændre ' .. oldname .."'s navn", {
         {type = 'input', label = 'Angiv det nye navn', required = true}
     })
+
+    if not input then return end
 
     local newname = input[1]
 
@@ -133,7 +147,7 @@ function DeleteGang(gangname)
 
     local alert = lib.alertDialog({
         header = 'Er du sikker?',
-        content = 'Er du sikker på at du vil slette ' .. gangname .. '?\n\n# Dette kan ikke fortrydes',
+        content = 'Er du sikker på at du vil slette ' .. gangname .. '?\n\n## Dette kan ikke fortrydes',
         cancel = true,
         labels = {
             confirm = 'Ja',
@@ -164,8 +178,9 @@ function ChangeBoss(gangname)
         {type = 'input', label = 'Angiv den nye bandeleders ID', required = true}
     })
 
+    if not input then return end
+
     local changed = lib.callback.await('th-bandesystem:ChangeBoss', false, gangname, input[1])
-    print(json.encode(changed))
 
     if not changed then 
         lib.notify({title = 'Der opstod en fejl', description = 'Der opstod en fejl, under ændringen af bandelederen', type = 'error'})

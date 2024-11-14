@@ -3,15 +3,27 @@
 --@return table
 
 lib.callback.register('th-bandesystem:GetGangs', function(source)
-    local xPlayer = ESX.GetPlayerFromId(source)
+    local xPlayer  = ESX.GetPlayerFromId(source)
+    local gangInfo = {}
 
     if not xPlayer then return end
 
     if not GetAdminGroup(source) then return end
 
-    local test = MySQL.query.await('SELECT gang_name, gang_owner FROM `gangs`')
+    local gangs = MySQL.query.await('SELECT gang_id, gang_name, gang_owner FROM `gangs`')
 
-    return test
+    if not gangs then return end
+
+    local gang_members = MySQL.query.await('SELECT identifier FROM `gang_members` WHERE gang_id = ?', { gangs[1].gang_id })
+
+    table.insert(gangInfo, {
+        gangs = gangs,
+        members = gang_members
+    })
+
+
+
+    return gangInfo
 end)
 
 
@@ -125,8 +137,6 @@ lib.callback.register('th-bandesystem:ChangeBoss', function(source, gangname, ne
     local success = MySQL.update.await('UPDATE gangs SET gang_owner = ? WHERE gang_name = ?', {
         oPlayer.identifier, gangname
     })
-
-    print(json.encode(success))
 
     if not success then return end
 
