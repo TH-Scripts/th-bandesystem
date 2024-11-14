@@ -46,6 +46,8 @@ lib.callback.register('th-bandesystem:CreateGang', function(source, owner, name)
         name, yPlayer.identifier
     })
 
+    AddToSkill(name)
+
     SendDiscord('Bande oprettet', 'Der blev oprettet en bande\n\nBande navn: ' .. name .. '\nBande Leder (id): ' .. yPlayer.identifier .. '', 5763719)
 
     return true
@@ -85,12 +87,34 @@ lib.callback.register('th-bandesystem:DeleteGang', function(source, gangname)
     return true
 end)
 
--- lib.callback.register('th-bandesystem:GetOwner', function(source, gangname)
---     local owner = MySQL.query.await('SELECT gang_owner FROM gangs WHERE gang_name = ?', {
---         gangname
---     })
+--MARK: Add skill function
 
---     if not owner then return end
+function AddToSkill(name)
+    local gang_id = MySQL.query.await('SELECT gang_id FROM `gangs` WHERE gang_name = ?', {
+        name
+    })
 
---     return owner[1]
--- end)
+    local add_skill = MySQL.insert.await('INSERT INTO `gang_skills` (gang_id) VALUES (?)' ,{
+        gang_id[1].gang_id
+    })
+end
+
+--MARK: Change gang boss
+
+lib.callback.register('th-bandesystem:ChangeBoss', function(source, gangname, newOwner)
+    local oPlayer = ESX.GetPlayerFromId(newOwner)
+
+    if not oPlayer then return end
+
+    local success = MySQL.update.await('UPDATE gangs SET gang_owner = ? WHERE gang_name = ?', {
+        oPlayer.identifier, gangname
+    })
+
+    print(json.encode(success))
+
+    if not success then return end
+
+    SendDiscord('Bande leder ændret', 'Banden ' .. gangname .. ', fik ændret leder til ' .. GetPlayerName(newOwner) .. '', 16776960)
+
+    return true
+end)

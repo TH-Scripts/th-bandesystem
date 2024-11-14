@@ -70,6 +70,13 @@ function EditGang(gangname)
                 onSelect = function()
                     DeleteGang(gangname)
                 end
+            },
+            {
+                title = 'Ændre bande boss',
+                description = 'Ændre hvem der skal være leder af banden',
+                onSelect = function()
+                    ChangeBoss(gangname)
+                end
             }
         }
     })
@@ -145,6 +152,25 @@ function DeleteGang(gangname)
         end
     else
         return
+    end
+end
+
+--MARK: Change Boss
+
+function ChangeBoss(gangname)
+    if not gangname then return end
+
+    local input = lib.inputDialog('Ændre bandeleder', {
+        {type = 'input', label = 'Angiv den nye bandeleders ID', required = true}
+    })
+
+    local changed = lib.callback.await('th-bandesystem:ChangeBoss', false, gangname, input[1])
+    print(json.encode(changed))
+
+    if not changed then 
+        lib.notify({title = 'Der opstod en fejl', description = 'Der opstod en fejl, under ændringen af bandelederen', type = 'error'})
+    else
+        lib.notify({title = 'Bandeleder ændret', type = 'success'})
     end
 end
 
