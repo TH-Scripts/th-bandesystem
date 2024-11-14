@@ -151,6 +151,36 @@ function LevelUpSkill(source, skill)
 end
 
 
+--MARK: Check level
+--@param source int
+--@param skill string
+--@param lvl int
+--@return bool
+
+lib.callback.register('th-bandesystem:CheckLevel', function(source, skill, lvl)
+    local xPlayer = ESX.GetPlayerFromId(source)
+    local gangId = GetGangId(xPlayer.identifier)
+
+    if not skill or not lvl then return end
+    if not xPlayer or not gangId then return end
+
+    local level_skill = string.sub(skill, 1, -4) .. "_level" 
+
+    local current_lvl = MySQL.query.await('SELECT ' .. level_skill .. ' FROM gang_skills WHERE gang_id = ?', {
+        gangId
+    })
+
+    if current_lvl[1][level_skill] >= lvl then
+        return true
+    else
+        return false
+    end
+end)
+
+
+--MARK: Get gang id
+--@param identifier string
+--@return int
 
 function GetGangId(identifier)
     local gangId = MySQL.Sync.fetchAll('SELECT gang_id FROM gangs WHERE gang_owner = ?', { identifier })

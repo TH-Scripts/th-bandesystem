@@ -3,6 +3,12 @@
 --@return table
 
 lib.callback.register('th-bandesystem:GetGangs', function(source)
+    local xPlayer = ESX.GetPlayerFromId(source)
+
+    if not xPlayer then return end
+
+    if not GetAdminGroup(source) then return end
+
     local test = MySQL.query.await('SELECT gang_name, gang_owner FROM `gangs`')
 
     return test
@@ -19,6 +25,8 @@ lib.callback.register('th-bandesystem:CheckUserGroup', function(source)
 
     if not xPlayer then return end
 
+    if not GetAdminGroup(source) then return end
+
     local group = xPlayer.getGroup()
 
     return group
@@ -34,6 +42,8 @@ lib.callback.register('th-bandesystem:CreateGang', function(source, owner, name)
     local xPlayer = ESX.GetPlayerFromId(source)
     local yPlayer = ESX.GetPlayerFromId(owner)
     if not xPlayer or not yPlayer then return end
+
+    if not GetAdminGroup(source) then return end
 
 
     local create_gang = MySQL.insert.await('INSERT INTO `gangs` (gang_name, gang_owner) VALUES (?, ?)', {
@@ -58,6 +68,9 @@ end)
 
 lib.callback.register('th-bandesystem:EditName', function(source, oldname, newname)
     if not source then return end
+
+    if not GetAdminGroup(source) then return end
+
     local success = MySQL.update.await('UPDATE gangs SET gang_name = ? WHERE gang_name = ?', {
         newname, oldname
     })
@@ -75,6 +88,7 @@ lib.callback.register('th-bandesystem:DeleteGang', function(source, gangname)
     if not source then return end
     if not gangname then return end
 
+    if not GetAdminGroup(source) then return end
 
     local deleted = MySQL.query.await('DELETE FROM gangs WHERE gang_name = ?', {
         gangname
@@ -106,6 +120,8 @@ lib.callback.register('th-bandesystem:ChangeBoss', function(source, gangname, ne
 
     if not oPlayer then return end
 
+    if not GetAdminGroup(source) then return end
+
     local success = MySQL.update.await('UPDATE gangs SET gang_owner = ? WHERE gang_name = ?', {
         oPlayer.identifier, gangname
     })
@@ -118,3 +134,20 @@ lib.callback.register('th-bandesystem:ChangeBoss', function(source, gangname, ne
 
     return true
 end)
+
+
+
+--MARK: Get admin group
+--@param source int
+--@return bool
+
+function GetAdminGroup(source)
+    local xPlayer = ESX.GetPlayerFromId(source)
+
+    if not xPlayer then return end
+
+    if not xPlayer.getGroup() == 'admin' then return false end
+
+    return true
+
+end

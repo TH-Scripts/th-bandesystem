@@ -87,6 +87,23 @@ exports('AddExp', function(skill, amount)
 end)
 
 
+--MARK: Get level export
+--@param skill string
+--@param lvl int
+--@return bool
+
+
+exports('CheckLevel', function(skill, lvl)
+
+    if not skill or not lvl then return end
+
+    local level = lib.callback.await('th-bandesystem:CheckLevel', false, skill, lvl)
+
+    return level
+
+end)
+
+
 
 --MARK: Check for level up
 --@param skill string
@@ -108,6 +125,12 @@ function CheckForLevelUp(skill, exp)
         return false
     end
 end
+
+
+RegisterCommand('getlevel', function(source, args, rawCommand)
+    local test = exports['th-bandesystem']:CheckLevel('house_xp', 5)
+    print(test)
+end)
 
 RegisterCommand('levelupskill', function(source, args, rawCommand)
     CheckForLevelUp('house_xp', 10)

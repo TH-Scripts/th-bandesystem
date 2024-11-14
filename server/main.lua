@@ -6,16 +6,19 @@ ESX = exports['es_extended']:getSharedObject()
 --@param gangId int
 --@return table | false
 
-lib.callback.register('th-bandesystem:getAllMembers', function(source, gangId)
+lib.callback.register('th-bandesystem:getAllMembers', function(source)
     local xPlayer      = ESX.GetPlayerFromId(source)
+    local gangId       = GetGangId(xPlayer.identifier)
+    local members      = MySQL.Sync.fetchAll('SELECT * FROM gang_members WHERE gang_id = ?', { gangId })
     local memberData   = {}
 
     if not xPlayer then return end
 
     if not gangId then return end
 
-    local members = MySQL.Sync.fetchAll('SELECT * FROM gang_members WHERE gang_id = ?', { gangId.gang_id })
+    local check_gang_id = CheckGangId(source, gangId)
 
+    if not check_gang_id then return false end
 
     for _, member in pairs(members) do
 
@@ -39,14 +42,21 @@ end)
 --@param gangId int
 --@return table | false
 
-lib.callback.register('th-bandesystem:searchForMembers', function(source, search, gangId)
+lib.callback.register('th-bandesystem:searchForMembers', function(source, search)
     local xPlayer       = ESX.GetPlayerFromId(source)
+    local gangId        = GetGangId(xPlayer.identifier)
     local found         = false
     local foundMembers  = {}
     local members       = {}
     local memberNames   = {}
 
+    if not gangId then return end
+
     if not xPlayer or not search then return end
+
+    local check_gang_id = CheckGangId(source, gangId)
+
+    if not check_gang_id then return false end
 
     members = MySQL.Sync.fetchAll('SELECT * FROM gang_members WHERE gang_id = ?', { gangId })
 
@@ -83,10 +93,10 @@ end)
 
 lib.callback.register('th-bandesystem:getGangId', function(source)
     local xPlayer       = ESX.GetPlayerFromId(source)
+    local gangId        = MySQL.Sync.fetchAll('SELECT gang_id FROM gang_members WHERE identifier = ?', { xPlayer.identifier })
 
     if not xPlayer then return end
 
-    local gangId = MySQL.Sync.fetchAll('SELECT gang_id FROM gang_members WHERE identifier = ?', { xPlayer.identifier })
     
     return gangId[1]
 end)
@@ -94,14 +104,14 @@ end)
 --MARK: Get Gang Name
 
 lib.callback.register('th-bandesystem:GetGangName', function(source)
-    local xPlayer = ESX.GetPlayerFromId(source)
-    local gang = MySQL.query.await('SELECT gang FROM users WHERE identifier = ?', {
+    local xPlayer       = ESX.GetPlayerFromId(source)
+    local gangName      = MySQL.query.await('SELECT gang FROM users WHERE identifier = ?', {
         xPlayer.identifier
     })
 
-    if not gang then return end
+    if not gangName then return end
 
-    return gang[1].gang
+    return gangName[1].gang
 end)
 
 
@@ -111,12 +121,17 @@ end)
 --@param gangId int
 --@return boolean
 
-lib.callback.register('th-bandesystem:removeMember', function(source, identifier, gangId)
-    local xPlayer = ESX.GetPlayerFromId(source)
+lib.callback.register('th-bandesystem:removeMember', function(source, identifier)
+    local xPlayer       = ESX.GetPlayerFromId(source)
+    local gangId        = GetGangId(xPlayer.identifier)
+    local remove_member = MySQL.Sync.execute('DELETE FROM gang_members WHERE identifier = ? AND gang_id = ?', { identifier, gangId })
 
+    if not gangId then return end
     if not xPlayer then return end
 
-    local remove_member = MySQL.Sync.execute('DELETE FROM gang_members WHERE identifier = ? AND gang_id = ?', { identifier, gangId })
+    local check_gang_id = CheckGangId(source, gangId)
+
+    if not check_gang_id then return false end
 
     if remove_member then
         return true
@@ -134,7 +149,7 @@ end)
 
 lib.callback.register('th-bandesystem:getPlayersInDistance', function(source, closePlayers)
 
-    local players = {}
+    local players       = {}
 
     for _, player in pairs(closePlayers) do
         local xPlayer = ESX.GetPlayerFromId(player)
@@ -150,16 +165,22 @@ end)
 --@param gangId int
 --@return boolean
 
-lib.callback.register('th-bandesystem:addMemberToGang', function(source, identifier, gangId)
-    local xPlayer = ESX.GetPlayerFromId(source)
+lib.callback.register('th-bandesystem:addMemberToGang', function(source, identifier)
+    local xPlayer       = ESX.GetPlayerFromId(source)
+    local gangId        = GetGangId(xPlayer.identifier)
 
     if not xPlayer then return end
+    if not gangId then return end
+
+    local check_gang_id = CheckGangId(source, gangId)
+
+    if not check_gang_id then return false end
 
     --Check if the player is already in a gang
 
-    -- local is_in_gang = MySQL.Sync.fetchAll('SELECT * FROM gang_members WHERE identifier = ?', { identifier })
+    local is_in_gang = MySQL.Sync.fetchAll('SELECT * FROM gang_members WHERE identifier = ?', { identifier })
 
-    -- if is_in_gang then return false end
+    if is_in_gang then return false end
     
     --Add the member to the gang
 
@@ -169,3 +190,23 @@ lib.callback.register('th-bandesystem:addMemberToGang', function(source, identif
 
     return true
 end)
+
+
+
+--MARK: Check if gang id is equal to gang
+--@param gangId int
+--@return boolean
+
+function CheckGangId(source, gangId)
+    local xPlayer = ESX.GetPlayerFromId(source)
+
+    local get_current_gang = MySQL.Sync.fetchAll('SELECT gang_id FROM gang_members WHERE identifier = ?', { xPlayer.identifier })
+
+    if not xPlayer then return end
+
+    if get_current_gang[1].gang_id == gangId then
+        return true
+    else
+        return false
+    end
+end

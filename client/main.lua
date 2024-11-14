@@ -124,7 +124,7 @@ function AllMembersContextMenu(gangId)
     
     local options = {}
 
-    local result = lib.callback.await('th-bandesystem:getAllMembers', false, gangId)
+    local result = lib.callback.await('th-bandesystem:getAllMembers', false)
 
     if result then
         for _, member in pairs(result) do
@@ -172,7 +172,7 @@ function SearchForMembers(gangId)
                 type = 'error'
             })
         end
-    end, input[1], gangId)
+    end, input[1])
 end
 
 
@@ -259,7 +259,7 @@ function RemoveMember(name, identifier, gangId)
                 type = 'error'
             })
         end
-    end, identifier, gangId)
+    end, identifier)
 end
 
 
@@ -349,6 +349,6 @@ function AddMemberToGang(identifier, gangId)
                 type = 'error'
             })
         end
-    end, identifier, gangId)
+    end, identifier)
 
 end
