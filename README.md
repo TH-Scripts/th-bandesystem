@@ -4,9 +4,9 @@ Et avanceret bandesystem, lavet til at holde styr på din serveres bander.
 
 # Features
 
-> Indbygget skill system
-> Indbygget bossmenu, med mulighed for tilføje samt fjerne medlemmer, og tjekke status på bandes skills
-> Indbygget admin menu, med mulighed for at tilføje, ændre samt fjerne bander
+- Indbygget skill system
+- Indbygget bossmenu, med mulighed for tilføje samt fjerne medlemmer, og tjekke status på bandes skills
+- Indbygget admin menu, med mulighed for at tilføje, ændre samt fjerne bander
 
 
 # Exports
