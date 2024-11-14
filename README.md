@@ -39,3 +39,11 @@ Eksempel:
 ```lua
     exports["th-bandesystem"]:AddExp('house_robbery', 2)
 ```
+
+# Setup
+
+1. Download scriptet, og smid det ind i din resources mappe
+
+2. Kør databasen
+
+3. Nyd dit nye script fra th-development!
