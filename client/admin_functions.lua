@@ -62,6 +62,7 @@ function EditGang(gangname)
     lib.registerContext({
         id = 'th_bandesystem_gangs_edit',
         title = 'Håndter - ' .. gangname .. '',
+        menu = 'th_bandesystem_gangs_context_menu',
         options = {
             {
                 title = 'Ændre navn',
