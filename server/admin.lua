@@ -8,10 +8,7 @@ lib.callback.register('th-bandesystem:GetGangs', function(source)
 
     if not xPlayer then return end
 
-    if not GetAdminGroup(source) then 
-        DopPlayer(source, 'Du er blevet taget i vores anti-mod system.')
-        SendDiscord('En spiller blev kicket', .. GetPlayerName(source) .. ' forsøgte at trigger et event, han ikke har adgang til (Efter al sansynlighed en modder!)', 15548997)
-    end
+    if not GetAdminGroup(source) then end
 
     local gangs = MySQL.query.await('SELECT gang_id, gang_name, gang_owner FROM `gangs`')
 
@@ -23,8 +20,6 @@ lib.callback.register('th-bandesystem:GetGangs', function(source)
         gangs = gangs,
         members = gang_members
     })
-
-
 
     return gangInfo
 end)
@@ -40,10 +35,8 @@ lib.callback.register('th-bandesystem:CheckUserGroup', function(source)
 
     if not xPlayer then return end
 
-    iif not GetAdminGroup(source) then 
-        DopPlayer(source, 'Du er blevet taget i vores anti-mod system.')
-        SendDiscord('En spiller blev kicket', .. GetPlayerName(source) .. ' forsøgte at trigger et event, han ikke har adgang til (Efter al sansynlighed en modder!)', 15548997)
-    end
+    if not GetAdminGroup(source) then end
+
 
     local group = xPlayer.getGroup()
 
@@ -61,10 +54,8 @@ lib.callback.register('th-bandesystem:CreateGang', function(source, owner, name)
     local yPlayer = ESX.GetPlayerFromId(owner)
     if not xPlayer or not yPlayer then return end
 
-    if not GetAdminGroup(source) then 
-        DopPlayer(source, 'Du er blevet taget i vores anti-mod system.')
-        SendDiscord('En spiller blev kicket', .. GetPlayerName(source) .. ' forsøgte at trigger et event, han ikke har adgang til (Efter al sansynlighed en modder!)', 15548997)
-    end
+    if not GetAdminGroup(source) then end
+
 
 
     local create_gang = MySQL.insert.await('INSERT INTO `gangs` (gang_name, gang_owner) VALUES (?, ?)', {
@@ -90,10 +81,8 @@ end)
 lib.callback.register('th-bandesystem:EditName', function(source, oldname, newname)
     if not source then return end
 
-    if not GetAdminGroup(source) then 
-        DopPlayer(source, 'Du er blevet taget i vores anti-mod system.')
-        SendDiscord('En spiller blev kicket', .. GetPlayerName(source) .. ' forsøgte at trigger et event, han ikke har adgang til (Efter al sansynlighed en modder!)', 15548997)
-    end
+    if not GetAdminGroup(source) then end
+
 
     local success = MySQL.update.await('UPDATE gangs SET gang_name = ? WHERE gang_name = ?', {
         newname, oldname
@@ -112,10 +101,12 @@ lib.callback.register('th-bandesystem:DeleteGang', function(source, gangname)
     if not source then return end
     if not gangname then return end
 
-    if not GetAdminGroup(source) then 
-        DopPlayer(source, 'Du er blevet taget i vores anti-mod system.')
-        SendDiscord('En spiller blev kicket', .. GetPlayerName(source) .. ' forsøgte at trigger et event, han ikke har adgang til (Efter al sansynlighed en modder!)', 15548997)
-    end
+    if not GetAdminGroup(source) then end
+
+
+    local userResat = ResetUserGang(gangname)
+
+    if not userResat then return end
 
     local deleted = MySQL.query.await('DELETE FROM gangs WHERE gang_name = ?', {
         gangname
@@ -147,13 +138,15 @@ lib.callback.register('th-bandesystem:ChangeBoss', function(source, gangname, ne
 
     if not oPlayer then return end
 
-    if not GetAdminGroup(source) then 
-        DopPlayer(source, 'Du er blevet taget i vores anti-mod system.')
-        SendDiscord('En spiller blev kicket', .. GetPlayerName(source) .. ' forsøgte at trigger et event, han ikke har adgang til (Efter al sansynlighed en modder!)', 15548997)
-    end
+    if not GetAdminGroup(source) then end
+
 
     local success = MySQL.update.await('UPDATE gangs SET gang_owner = ? WHERE gang_name = ?', {
         oPlayer.identifier, gangname
+    })
+
+    local ChangeGangGroup = MySQL.update.await('UPDATE users SET gang = ? WHERE identifier = ?', {
+        gangname, oPlayer.identifier
     })
 
     if not success then return end
@@ -162,6 +155,25 @@ lib.callback.register('th-bandesystem:ChangeBoss', function(source, gangname, ne
 
     return true
 end)
+
+--MARK: Reset gang from user
+
+function ResetUserGang(gangname)
+    local user = MySQL.query.await('SELECT gang_owner FROM gangs WHERE gang_name = ?', {
+        gangname
+    })
+
+    if not GetAdminGroup(source) then end
+
+
+    if not user then return false end
+
+    local resetUser = MySQL.update.await('UPDATE users SET gang = ? WHERE identifier = ?', {
+        null, user[1].gang_owner
+    })
+
+    return true
+end
 
 
 
@@ -174,7 +186,12 @@ function GetAdminGroup(source)
 
     if not xPlayer then return end
 
-    if not xPlayer.getGroup() == 'admin' then return false end
+    if not xPlayer.getGroup() == 'admin' then 
+        DropPlayer(source, 'Du er blevet taget i vores anti-mod system.')
+        SendDiscord('En spiller blev kicket', GetPlayerName(source) .. ' forsøgte at trigger en function, han ikke har adgang til (Efter al sansynlighed en modder!)', 15548997)    
+        return false 
+    
+    end
 
     return true
 
